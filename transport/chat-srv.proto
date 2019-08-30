@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package transport;
+
+enum EventType {
+    READ = 0;
+    WRITING = 1;
+    USERSTATUS = 2;
+    MESSAGE = 3;
+    OUTROOM = 4;
+    INROOM = 5;
+}
+
+enum UserStatus {
+    ONLINE = 0;
+    DONTDISTURB = 1;
+    NOTHERE = 2;
+}
+
+message UserInfo {
+    string Id = 1;
+}
+
+message Room{
+    string id = 1;
+}
+
+message Event {
+    EventType type = 1;
+    Msg msg = 2;
+    Room room = 3;
+    UserStatus userStatus = 4;
+}
+
+message Msg{
+    string id = 1;
+    string text = 2;
+}
+
+message Status{
+    bool ok = 1;
+}
+
+message Get{
+}
+
+service Chat {
+    rpc Push (Event) returns (Status);
+    rpc SendMessage (Msg) returns (Status);
+    rpc Pull (Get) returns (stream Event);
+}
