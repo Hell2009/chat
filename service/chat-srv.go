@@ -14,7 +14,7 @@ func NewChatService() *ChatService {
 	return &ChatService{incoming: inc}
 }
 
-func (c ChatService) Push(ctx context.Context, t *transport.Event) (*transport.Status, error) {
+func (c *ChatService) Push(ctx context.Context, t *transport.Event) (*transport.Status, error) {
 	panic("implement me")
 }
 
