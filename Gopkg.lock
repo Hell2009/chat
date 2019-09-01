@@ -16,6 +16,14 @@
   version = "v1.3.2"
 
 [[projects]]
+  digest = "1:31399c12a402f501ae9ce8e3d8e5cd14a3066ae5a99b2cccb4928a44b7eae038"
+  name = "github.com/snksoft/crc"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "03404db21ad4e7182edf4843b51f6252799f7140"
+  version = "v1.1"
+
+[[projects]]
   branch = "master"
   digest = "1:8ab4e2402b395fe235adafbf9a8edfebc0245ef2f676bce6d6ad5da5dd7f1494"
   name = "golang.org/x/net"
@@ -118,6 +126,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/golang/protobuf/proto",
+    "github.com/snksoft/crc",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/status",

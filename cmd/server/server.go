@@ -1,6 +1,6 @@
 package main
 
-import "exp-chat/service"
+import "chat/service"
 
 func main() {
 	newChat := service.NewChatService()
