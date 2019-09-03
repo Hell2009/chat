@@ -6,17 +6,17 @@ import (
 )
 
 type UserStore struct {
-	users []transport.RegisterInfo
+	users []*transport.UserInfo
 }
 
 func NewUserStore() *UserStore {
-	users := make([]transport.RegisterInfo, 0)
+	users := make([]*transport.UserInfo, 0)
 	return &UserStore{users: users}
 }
 
 func (s UserStore) CheckUserExist(t *transport.UserInfo) bool {
 	for _, v := range s.users {
-		if v.UserInfo.Name == t.Name {
+		if v.Name == t.Name {
 			return true
 		}
 	}
@@ -33,14 +33,6 @@ func (s *UserStore) RegisterUser(t *transport.UserInfo) (ok bool, err error) {
 		Id:   NewId,
 		Name: t.Name,
 	}
-	rl := transport.RoomList{
-		Id:       NewId,
-		RoomList: make([]*transport.RoomInfo, 0),
-	}
-	regi := transport.RegisterInfo{
-		RoomList: &rl,
-		UserInfo: &ui,
-	}
-	s.users = append(s.users, regi)
+	s.users = append(s.users, &ui)
 	return true, err
 }

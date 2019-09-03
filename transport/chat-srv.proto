@@ -3,21 +3,28 @@ syntax = "proto3";
 package transport;
 
 enum EventType {
-    READMSG = 0;
-    WRITINGMSG = 1;
-    DELETEDMSG = 2;
-    USERSTATUS = 3;
-    MESSAGE = 4;
-    CREATEROOM = 5;
-    RENAMEROOM = 6;
-    LEAVEROOM = 7;
-    ENTERROOM = 8;
+    EMPTYEVENT = 0;
+
+    CREATEROOM = 6;
+    RENAMEROOM = 7;
+    DELETEEROOM = 8;
+
+    LEAVEROOM = 9;
+    ENTERROOM = 10;
+
+    MESSAGE = 5;
+    READMSG = 1;
+    WRITINGMSG = 2;
+    DELETEDMSG = 3;
+
+    USERSTATUS = 4;
 }
 
 enum UserStatus {
-    ONLINE = 0;
-    DONTDISTURB = 1;
-    NOTHERE = 2;
+    EMPTYSTATUS = 0;
+    ONLINE = 1;
+    DONTDISTURB = 2;
+    NOTHERE = 3;
 }
 
 message Get {
@@ -35,7 +42,9 @@ message Status {
 
 message Msg {
     string id = 1;
-    string text = 2;
+    string time = 2;
+    string text = 3;
+    bytes data = 4;
 }
 
 message RoomInfo {
@@ -43,16 +52,6 @@ message RoomInfo {
     string name = 2;
     UserInfo owner = 3;
     repeated UserInfo listUser = 4;
-}
-
-message RoomList {
-    string id = 1;
-    repeated RoomInfo roomList = 2;
-}
-
-message RegisterInfo {
-    RoomList roomList = 1;
-    UserInfo userInfo = 2;
 }
 
 message NewRoom {
@@ -63,7 +62,7 @@ message NewRoom {
 message RoomUser {
     string id = 1;
     RoomInfo room = 2;
-    Msg user = 3;
+    UserInfo user = 3;
 }
 
 message RoomMsg {
@@ -74,37 +73,44 @@ message RoomMsg {
 
 message Event {
     EventType type = 1;
-    Msg msg = 2;
-    RoomInfo room = 3;
     UserInfo owner = 4;
+    RoomInfo room = 2;
+    Msg msg = 3;
     UserStatus userStatus = 5;
 }
 
-service Server {
-    rpc CreateUser (UserInfo) returns (RegisterInfo);
-    rpc LogInUser (UserInfo) returns (RegisterInfo);
-    rpc PullEvent (UserInfo) returns (stream Event);
-}
-
 service RoomListSrv {
-    rpc GetRoomList (UserInfo) returns (RoomList);
-    rpc CreateRoom (NewRoom) returns (RoomList);
-    rpc DeleteRoom (RoomInfo) returns (RoomList);
-    rpc RenameRoom (RoomInfo) returns (RoomList);
+    rpc GetRoomList (UserInfo) returns (stream RoomInfo);
+    rpc CreateRoom (NewRoom) returns (Status);
+    rpc DeleteRoom (RoomInfo) returns (Status);
+    rpc RenameRoom (RoomInfo) returns (Status);
 }
 
 service UserSrv {
+    rpc GetUserList (Get) returns (stream UserInfo);
+    rpc CreateUser (UserInfo) returns (Status);
+    rpc LogInUser (UserInfo) returns (Status);
     rpc PushStatus (UserInfo) returns (Status);
 }
 
 service RoomSrv {
-    rpc AddUser (RoomUser) returns (RoomInfo);
-    rpc KickUser (RoomUser) returns (RoomInfo);
+    rpc AddUser (RoomUser) returns (Status);
+    rpc KickUser (RoomUser) returns (Status);
     rpc LeaveRoom (RoomUser) returns (Status);
+}
+
+service MessageSrv {
     rpc SendMessage (RoomMsg) returns (Status);
     rpc EditMessage (RoomMsg) returns (Status);
     rpc DeleteMessage (RoomMsg) returns (Status);
 }
+
+service EventSender{
+    rpc PushEvent (Event) returns (Status);
+    rpc PullEvent (UserInfo) returns (stream Event);
+}
+
+
 
 
 

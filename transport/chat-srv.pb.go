@@ -27,39 +27,45 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 type EventType int32
 
 const (
-	EventType_READMSG    EventType = 0
-	EventType_WRITINGMSG EventType = 1
-	EventType_DELETEDMSG EventType = 2
-	EventType_USERSTATUS EventType = 3
-	EventType_MESSAGE    EventType = 4
-	EventType_CREATEROOM EventType = 5
-	EventType_RENAMEROOM EventType = 6
-	EventType_LEAVEROOM  EventType = 7
-	EventType_ENTERROOM  EventType = 8
+	EventType_EMPTYEVENT  EventType = 0
+	EventType_CREATEROOM  EventType = 6
+	EventType_RENAMEROOM  EventType = 7
+	EventType_DELETEEROOM EventType = 8
+	EventType_LEAVEROOM   EventType = 9
+	EventType_ENTERROOM   EventType = 10
+	EventType_MESSAGE     EventType = 5
+	EventType_READMSG     EventType = 1
+	EventType_WRITINGMSG  EventType = 2
+	EventType_DELETEDMSG  EventType = 3
+	EventType_USERSTATUS  EventType = 4
 )
 
 var EventType_name = map[int32]string{
-	0: "READMSG",
-	1: "WRITINGMSG",
-	2: "DELETEDMSG",
-	3: "USERSTATUS",
-	4: "MESSAGE",
-	5: "CREATEROOM",
-	6: "RENAMEROOM",
-	7: "LEAVEROOM",
-	8: "ENTERROOM",
+	0:  "EMPTYEVENT",
+	6:  "CREATEROOM",
+	7:  "RENAMEROOM",
+	8:  "DELETEEROOM",
+	9:  "LEAVEROOM",
+	10: "ENTERROOM",
+	5:  "MESSAGE",
+	1:  "READMSG",
+	2:  "WRITINGMSG",
+	3:  "DELETEDMSG",
+	4:  "USERSTATUS",
 }
 
 var EventType_value = map[string]int32{
-	"READMSG":    0,
-	"WRITINGMSG": 1,
-	"DELETEDMSG": 2,
-	"USERSTATUS": 3,
-	"MESSAGE":    4,
-	"CREATEROOM": 5,
-	"RENAMEROOM": 6,
-	"LEAVEROOM":  7,
-	"ENTERROOM":  8,
+	"EMPTYEVENT":  0,
+	"CREATEROOM":  6,
+	"RENAMEROOM":  7,
+	"DELETEEROOM": 8,
+	"LEAVEROOM":   9,
+	"ENTERROOM":   10,
+	"MESSAGE":     5,
+	"READMSG":     1,
+	"WRITINGMSG":  2,
+	"DELETEDMSG":  3,
+	"USERSTATUS":  4,
 }
 
 func (x EventType) String() string {
@@ -73,21 +79,24 @@ func (EventType) EnumDescriptor() ([]byte, []int) {
 type UserStatus int32
 
 const (
-	UserStatus_ONLINE      UserStatus = 0
-	UserStatus_DONTDISTURB UserStatus = 1
-	UserStatus_NOTHERE     UserStatus = 2
+	UserStatus_EMPTYSTATUS UserStatus = 0
+	UserStatus_ONLINE      UserStatus = 1
+	UserStatus_DONTDISTURB UserStatus = 2
+	UserStatus_NOTHERE     UserStatus = 3
 )
 
 var UserStatus_name = map[int32]string{
-	0: "ONLINE",
-	1: "DONTDISTURB",
-	2: "NOTHERE",
+	0: "EMPTYSTATUS",
+	1: "ONLINE",
+	2: "DONTDISTURB",
+	3: "NOTHERE",
 }
 
 var UserStatus_value = map[string]int32{
-	"ONLINE":      0,
-	"DONTDISTURB": 1,
-	"NOTHERE":     2,
+	"EMPTYSTATUS": 0,
+	"ONLINE":      1,
+	"DONTDISTURB": 2,
+	"NOTHERE":     3,
 }
 
 func (x UserStatus) String() string {
@@ -181,7 +190,7 @@ func (m *UserInfo) GetStatus() UserStatus {
 	if m != nil {
 		return m.Status
 	}
-	return UserStatus_ONLINE
+	return UserStatus_EMPTYSTATUS
 }
 
 type Status struct {
@@ -225,7 +234,9 @@ func (m *Status) GetOk() bool {
 
 type Msg struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Text                 string   `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
+	Time                 string   `protobuf:"bytes,2,opt,name=time,proto3" json:"time,omitempty"`
+	Text                 string   `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
+	Data                 []byte   `protobuf:"bytes,4,opt,name=data,proto3" json:"data,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -263,11 +274,25 @@ func (m *Msg) GetId() string {
 	return ""
 }
 
+func (m *Msg) GetTime() string {
+	if m != nil {
+		return m.Time
+	}
+	return ""
+}
+
 func (m *Msg) GetText() string {
 	if m != nil {
 		return m.Text
 	}
 	return ""
+}
+
+func (m *Msg) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
 }
 
 type RoomInfo struct {
@@ -333,100 +358,6 @@ func (m *RoomInfo) GetListUser() []*UserInfo {
 	return nil
 }
 
-type RoomList struct {
-	Id                   string      `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	RoomList             []*RoomInfo `protobuf:"bytes,2,rep,name=roomList,proto3" json:"roomList,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *RoomList) Reset()         { *m = RoomList{} }
-func (m *RoomList) String() string { return proto.CompactTextString(m) }
-func (*RoomList) ProtoMessage()    {}
-func (*RoomList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f3944f47fb55b982, []int{5}
-}
-
-func (m *RoomList) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RoomList.Unmarshal(m, b)
-}
-func (m *RoomList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RoomList.Marshal(b, m, deterministic)
-}
-func (m *RoomList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RoomList.Merge(m, src)
-}
-func (m *RoomList) XXX_Size() int {
-	return xxx_messageInfo_RoomList.Size(m)
-}
-func (m *RoomList) XXX_DiscardUnknown() {
-	xxx_messageInfo_RoomList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RoomList proto.InternalMessageInfo
-
-func (m *RoomList) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *RoomList) GetRoomList() []*RoomInfo {
-	if m != nil {
-		return m.RoomList
-	}
-	return nil
-}
-
-type RegisterInfo struct {
-	RoomList             *RoomList `protobuf:"bytes,1,opt,name=roomList,proto3" json:"roomList,omitempty"`
-	UserInfo             *UserInfo `protobuf:"bytes,2,opt,name=userInfo,proto3" json:"userInfo,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
-}
-
-func (m *RegisterInfo) Reset()         { *m = RegisterInfo{} }
-func (m *RegisterInfo) String() string { return proto.CompactTextString(m) }
-func (*RegisterInfo) ProtoMessage()    {}
-func (*RegisterInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f3944f47fb55b982, []int{6}
-}
-
-func (m *RegisterInfo) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RegisterInfo.Unmarshal(m, b)
-}
-func (m *RegisterInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RegisterInfo.Marshal(b, m, deterministic)
-}
-func (m *RegisterInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RegisterInfo.Merge(m, src)
-}
-func (m *RegisterInfo) XXX_Size() int {
-	return xxx_messageInfo_RegisterInfo.Size(m)
-}
-func (m *RegisterInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_RegisterInfo.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RegisterInfo proto.InternalMessageInfo
-
-func (m *RegisterInfo) GetRoomList() *RoomList {
-	if m != nil {
-		return m.RoomList
-	}
-	return nil
-}
-
-func (m *RegisterInfo) GetUserInfo() *UserInfo {
-	if m != nil {
-		return m.UserInfo
-	}
-	return nil
-}
-
 type NewRoom struct {
 	Room                 *RoomInfo   `protobuf:"bytes,1,opt,name=room,proto3" json:"room,omitempty"`
 	ListUser             []*UserInfo `protobuf:"bytes,2,rep,name=listUser,proto3" json:"listUser,omitempty"`
@@ -439,7 +370,7 @@ func (m *NewRoom) Reset()         { *m = NewRoom{} }
 func (m *NewRoom) String() string { return proto.CompactTextString(m) }
 func (*NewRoom) ProtoMessage()    {}
 func (*NewRoom) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f3944f47fb55b982, []int{7}
+	return fileDescriptor_f3944f47fb55b982, []int{5}
 }
 
 func (m *NewRoom) XXX_Unmarshal(b []byte) error {
@@ -477,7 +408,7 @@ func (m *NewRoom) GetListUser() []*UserInfo {
 type RoomUser struct {
 	Id                   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Room                 *RoomInfo `protobuf:"bytes,2,opt,name=room,proto3" json:"room,omitempty"`
-	User                 *Msg      `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+	User                 *UserInfo `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -487,7 +418,7 @@ func (m *RoomUser) Reset()         { *m = RoomUser{} }
 func (m *RoomUser) String() string { return proto.CompactTextString(m) }
 func (*RoomUser) ProtoMessage()    {}
 func (*RoomUser) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f3944f47fb55b982, []int{8}
+	return fileDescriptor_f3944f47fb55b982, []int{6}
 }
 
 func (m *RoomUser) XXX_Unmarshal(b []byte) error {
@@ -522,7 +453,7 @@ func (m *RoomUser) GetRoom() *RoomInfo {
 	return nil
 }
 
-func (m *RoomUser) GetUser() *Msg {
+func (m *RoomUser) GetUser() *UserInfo {
 	if m != nil {
 		return m.User
 	}
@@ -542,7 +473,7 @@ func (m *RoomMsg) Reset()         { *m = RoomMsg{} }
 func (m *RoomMsg) String() string { return proto.CompactTextString(m) }
 func (*RoomMsg) ProtoMessage()    {}
 func (*RoomMsg) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f3944f47fb55b982, []int{9}
+	return fileDescriptor_f3944f47fb55b982, []int{7}
 }
 
 func (m *RoomMsg) XXX_Unmarshal(b []byte) error {
@@ -586,9 +517,9 @@ func (m *RoomMsg) GetCreator() *UserInfo {
 
 type Event struct {
 	Type                 EventType  `protobuf:"varint,1,opt,name=type,proto3,enum=transport.EventType" json:"type,omitempty"`
-	Msg                  *Msg       `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	Room                 *RoomInfo  `protobuf:"bytes,3,opt,name=room,proto3" json:"room,omitempty"`
 	Owner                *UserInfo  `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	Room                 *RoomInfo  `protobuf:"bytes,2,opt,name=room,proto3" json:"room,omitempty"`
+	Msg                  *Msg       `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
 	UserStatus           UserStatus `protobuf:"varint,5,opt,name=userStatus,proto3,enum=transport.UserStatus" json:"userStatus,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
@@ -599,7 +530,7 @@ func (m *Event) Reset()         { *m = Event{} }
 func (m *Event) String() string { return proto.CompactTextString(m) }
 func (*Event) ProtoMessage()    {}
 func (*Event) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f3944f47fb55b982, []int{10}
+	return fileDescriptor_f3944f47fb55b982, []int{8}
 }
 
 func (m *Event) XXX_Unmarshal(b []byte) error {
@@ -624,12 +555,12 @@ func (m *Event) GetType() EventType {
 	if m != nil {
 		return m.Type
 	}
-	return EventType_READMSG
+	return EventType_EMPTYEVENT
 }
 
-func (m *Event) GetMsg() *Msg {
+func (m *Event) GetOwner() *UserInfo {
 	if m != nil {
-		return m.Msg
+		return m.Owner
 	}
 	return nil
 }
@@ -641,9 +572,9 @@ func (m *Event) GetRoom() *RoomInfo {
 	return nil
 }
 
-func (m *Event) GetOwner() *UserInfo {
+func (m *Event) GetMsg() *Msg {
 	if m != nil {
-		return m.Owner
+		return m.Msg
 	}
 	return nil
 }
@@ -652,7 +583,7 @@ func (m *Event) GetUserStatus() UserStatus {
 	if m != nil {
 		return m.UserStatus
 	}
-	return UserStatus_ONLINE
+	return UserStatus_EMPTYSTATUS
 }
 
 func init() {
@@ -663,8 +594,6 @@ func init() {
 	proto.RegisterType((*Status)(nil), "transport.Status")
 	proto.RegisterType((*Msg)(nil), "transport.Msg")
 	proto.RegisterType((*RoomInfo)(nil), "transport.RoomInfo")
-	proto.RegisterType((*RoomList)(nil), "transport.RoomList")
-	proto.RegisterType((*RegisterInfo)(nil), "transport.RegisterInfo")
 	proto.RegisterType((*NewRoom)(nil), "transport.NewRoom")
 	proto.RegisterType((*RoomUser)(nil), "transport.RoomUser")
 	proto.RegisterType((*RoomMsg)(nil), "transport.RoomMsg")
@@ -674,56 +603,57 @@ func init() {
 func init() { proto.RegisterFile("transport/chat-srv.proto", fileDescriptor_f3944f47fb55b982) }
 
 var fileDescriptor_f3944f47fb55b982 = []byte{
-	// 772 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0xcb, 0x6e, 0xd3, 0x4c,
-	0x14, 0xae, 0x9d, 0xfb, 0xc9, 0xdf, 0xfc, 0x66, 0x00, 0x61, 0x75, 0x15, 0x79, 0x43, 0x5b, 0xa9,
-	0x2d, 0x4a, 0x43, 0x11, 0x6c, 0x50, 0x68, 0x46, 0xc1, 0x6a, 0xe2, 0x54, 0x63, 0x07, 0x56, 0x2c,
-	0x42, 0x32, 0xa4, 0x51, 0xd3, 0x38, 0xf2, 0x4c, 0x52, 0xfa, 0x00, 0x6c, 0xd8, 0xf2, 0x2c, 0x3c,
-	0x06, 0xaf, 0xc0, 0x1b, 0xf0, 0x0e, 0x68, 0xc6, 0x97, 0xba, 0xb5, 0xdd, 0x36, 0xec, 0x72, 0xe6,
-	0x9c, 0xef, 0x3b, 0xdf, 0xb9, 0xf8, 0x28, 0xa0, 0x73, 0x6f, 0x38, 0x67, 0x0b, 0xd7, 0xe3, 0x07,
-	0xa3, 0xb3, 0x21, 0xdf, 0x63, 0xde, 0x6a, 0x7f, 0xe1, 0xb9, 0xdc, 0x45, 0x95, 0xc8, 0x63, 0x14,
-	0x20, 0xd7, 0xa1, 0xdc, 0xf8, 0x04, 0xe5, 0x01, 0xa3, 0x9e, 0x39, 0xff, 0xe2, 0xa2, 0x1a, 0xa8,
-	0xe6, 0x58, 0x57, 0xea, 0xca, 0x76, 0x85, 0xa8, 0xe6, 0x18, 0x21, 0xc8, 0xcf, 0x87, 0x17, 0x54,
-	0x57, 0xe5, 0x8b, 0xfc, 0x8d, 0xf6, 0xa0, 0xc8, 0xf8, 0x90, 0x2f, 0x99, 0x9e, 0xab, 0x2b, 0xdb,
-	0xb5, 0xc6, 0xd3, 0xfd, 0x88, 0x72, 0x5f, 0x10, 0xd9, 0xd2, 0x49, 0x82, 0x20, 0x43, 0x87, 0xa2,
-	0xff, 0x22, 0xc8, 0xdd, 0x73, 0x49, 0x5e, 0x26, 0xaa, 0x7b, 0x6e, 0xec, 0x40, 0xae, 0xc7, 0x26,
-	0xe2, 0x79, 0x1a, 0xe5, 0x9c, 0xca, 0x9c, 0x9c, 0x7e, 0xe5, 0x61, 0x4e, 0xf1, 0xdb, 0xf8, 0xae,
-	0x40, 0x99, 0xb8, 0xee, 0x45, 0x28, 0xf2, 0x36, 0x20, 0x21, 0x72, 0x07, 0x0a, 0xee, 0xe5, 0x9c,
-	0x7a, 0x52, 0x63, 0xb5, 0xf1, 0xf8, 0x96, 0x46, 0xc1, 0x43, 0xfc, 0x08, 0x74, 0x00, 0xe5, 0xd9,
-	0x94, 0x71, 0xf1, 0xac, 0xe7, 0xeb, 0xb9, 0xac, 0xe8, 0x28, 0xc8, 0x38, 0xf1, 0xb5, 0x74, 0xa7,
-	0x8c, 0x27, 0xb4, 0x1c, 0x40, 0xd9, 0x0b, 0x7c, 0xba, 0x9a, 0x20, 0x0b, 0x4b, 0x20, 0x51, 0x90,
-	0xb1, 0x80, 0xff, 0x08, 0x9d, 0x4c, 0x19, 0x0f, 0x26, 0x10, 0x27, 0x50, 0x12, 0xda, 0xc3, 0xbc,
-	0xd7, 0x04, 0x02, 0xb0, 0x0c, 0x34, 0xca, 0x0e, 0x64, 0xc9, 0x0f, 0x83, 0x8c, 0x11, 0x94, 0x2c,
-	0x7a, 0x29, 0x98, 0xd0, 0x73, 0xc8, 0x0b, 0x9e, 0x8c, 0x44, 0x12, 0x27, 0x03, 0x6e, 0xf4, 0x48,
-	0x7d, 0x48, 0x8f, 0x26, 0x7e, 0x8f, 0xc4, 0xef, 0x44, 0x8f, 0xc2, 0xac, 0xea, 0x7d, 0x59, 0x0d,
-	0xc8, 0x0b, 0xd5, 0xc1, 0x0c, 0x6b, 0xb1, 0xc0, 0x1e, 0x9b, 0x10, 0xe9, 0x33, 0xbe, 0x29, 0x50,
-	0x12, 0x30, 0xb1, 0x49, 0x0f, 0x2e, 0x27, 0x24, 0x56, 0xb3, 0x89, 0xd1, 0x1e, 0x94, 0x46, 0x1e,
-	0x1d, 0x72, 0xf7, 0xce, 0x1d, 0x0a, 0x63, 0x8c, 0xdf, 0x0a, 0x14, 0xf0, 0x8a, 0xce, 0x39, 0xda,
-	0x86, 0x3c, 0xbf, 0x5a, 0x50, 0xa9, 0xa2, 0xd6, 0x78, 0x12, 0x43, 0x49, 0xbf, 0x73, 0xb5, 0xa0,
-	0x44, 0x46, 0xa0, 0x3a, 0xe4, 0x2e, 0xd8, 0x24, 0x43, 0x85, 0x70, 0x45, 0x15, 0xe5, 0xee, 0xab,
-	0x28, 0xda, 0xf7, 0xfc, 0xbd, 0xfb, 0xfe, 0x12, 0x60, 0x19, 0x7d, 0xa6, 0x7a, 0xe1, 0xae, 0x6f,
-	0x38, 0x16, 0xb8, 0xfb, 0x43, 0x81, 0x4a, 0x54, 0x00, 0xaa, 0x42, 0x89, 0xe0, 0x56, 0xbb, 0x67,
-	0x77, 0xb4, 0x0d, 0x54, 0x03, 0xf8, 0x48, 0x4c, 0xc7, 0xb4, 0x3a, 0xc2, 0x56, 0x84, 0xdd, 0xc6,
-	0x5d, 0xec, 0x60, 0xe9, 0x57, 0x85, 0x3d, 0xb0, 0x31, 0xb1, 0x9d, 0x96, 0x33, 0xb0, 0xb5, 0x9c,
-	0x00, 0xf7, 0xb0, 0x6d, 0xb7, 0x3a, 0x58, 0xcb, 0x0b, 0xe7, 0x31, 0xc1, 0x2d, 0x07, 0x93, 0x7e,
-	0xbf, 0xa7, 0x15, 0x84, 0x4d, 0xb0, 0xd5, 0xea, 0xf9, 0x76, 0x11, 0x6d, 0x42, 0xa5, 0x8b, 0x5b,
-	0x1f, 0x7c, 0xb3, 0x24, 0x4c, 0x6c, 0x39, 0x98, 0x48, 0xb3, 0xbc, 0x7b, 0x04, 0x70, 0xad, 0x17,
-	0x01, 0x14, 0xfb, 0x56, 0xd7, 0xb4, 0xb0, 0xb6, 0x81, 0xfe, 0x87, 0x6a, 0xbb, 0x6f, 0x39, 0x6d,
-	0xd3, 0x76, 0x06, 0xe4, 0x9d, 0xa6, 0x88, 0xac, 0x56, 0xdf, 0x79, 0x8f, 0x09, 0xd6, 0xd4, 0xc6,
-	0x4f, 0x05, 0x8a, 0x36, 0xf5, 0x56, 0xd4, 0x43, 0x6f, 0x00, 0x8e, 0xc5, 0x10, 0xa9, 0x5c, 0xd6,
-	0xb4, 0xce, 0x6d, 0x3d, 0x8b, 0x37, 0x3e, 0xfe, 0xb5, 0xbe, 0x86, 0x4a, 0xd7, 0x9d, 0x98, 0xf3,
-	0x7f, 0x80, 0x36, 0xa1, 0x72, 0xba, 0x9c, 0xcd, 0xfc, 0x9d, 0x49, 0x85, 0x6a, 0xb7, 0x57, 0xe7,
-	0x85, 0xd2, 0xf8, 0xa3, 0x40, 0x35, 0x3c, 0x02, 0xb6, 0xb7, 0x42, 0xaf, 0xa0, 0xda, 0xa1, 0x3c,
-	0x3a, 0x47, 0xa9, 0x3c, 0x69, 0x07, 0x44, 0x6c, 0x81, 0x5f, 0xb5, 0x3c, 0x04, 0x28, 0x16, 0x12,
-	0x1c, 0x87, 0x74, 0xd8, 0x11, 0x40, 0x9b, 0xce, 0x68, 0x00, 0x4b, 0x5b, 0xc8, 0x4c, 0x1c, 0xa1,
-	0xe2, 0x32, 0xaf, 0x87, 0x6b, 0xbc, 0x85, 0x92, 0x9c, 0xaf, 0xb7, 0x42, 0x4d, 0x80, 0xd3, 0x25,
-	0x3b, 0x0b, 0x46, 0x9d, 0x5a, 0xe9, 0xa3, 0xd8, 0xa3, 0x1f, 0xd7, 0xf8, 0xa5, 0xfa, 0xf7, 0x41,
-	0x30, 0x1c, 0x42, 0xa9, 0x35, 0x1e, 0x27, 0x66, 0x15, 0x1e, 0xaa, 0xad, 0x34, 0x59, 0xa8, 0x09,
-	0xe5, 0x93, 0xe9, 0xe8, 0x7c, 0x4d, 0xd4, 0x21, 0x54, 0xba, 0x74, 0xb8, 0x4a, 0x2f, 0x57, 0xc2,
-	0x92, 0x5a, 0x51, 0x13, 0xaa, 0x36, 0x9d, 0x8f, 0x7b, 0x94, 0xb1, 0xe1, 0x84, 0xde, 0x18, 0x4a,
-	0x70, 0xe2, 0x32, 0x50, 0x78, 0x3c, 0xe5, 0x6b, 0xa2, 0x8e, 0x60, 0xd3, 0x1f, 0xe4, 0x7a, 0xb8,
-	0xcf, 0x45, 0xf9, 0x37, 0xe2, 0xf0, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x98, 0x0a, 0x84, 0xe9,
-	0x62, 0x08, 0x00, 0x00,
+	// 794 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xcd, 0x8e, 0xe2, 0x46,
+	0x10, 0xde, 0x36, 0xe6, 0xc7, 0x45, 0x96, 0x38, 0x9d, 0x44, 0xb2, 0xe6, 0x84, 0x7c, 0x59, 0xb2,
+	0xd2, 0xcc, 0x12, 0xcf, 0x24, 0x52, 0x8e, 0x64, 0x69, 0x11, 0x2b, 0xd8, 0x4c, 0xda, 0x66, 0xa3,
+	0x1c, 0x72, 0x70, 0xa0, 0xc3, 0xa2, 0x01, 0x8c, 0xec, 0x86, 0x9d, 0x79, 0x80, 0x5c, 0xf2, 0x1e,
+	0xb9, 0xe7, 0x90, 0xe7, 0x89, 0x72, 0xcd, 0x5b, 0xac, 0xaa, 0x6d, 0x18, 0x06, 0x3c, 0x33, 0x70,
+	0x73, 0x55, 0x57, 0x7d, 0xf5, 0x7d, 0x55, 0xdd, 0x25, 0x83, 0x25, 0x93, 0x68, 0x91, 0x2e, 0xe3,
+	0x44, 0xbe, 0x19, 0xbd, 0x8f, 0xe4, 0x79, 0x9a, 0xac, 0x2f, 0x96, 0x49, 0x2c, 0x63, 0x6a, 0x6c,
+	0x4f, 0xec, 0x32, 0x94, 0x7a, 0x42, 0xda, 0xbf, 0x42, 0x6d, 0x98, 0x8a, 0xc4, 0x5d, 0xfc, 0x1e,
+	0xd3, 0x06, 0x68, 0xee, 0xd8, 0x22, 0x4d, 0xd2, 0x32, 0xb8, 0xe6, 0x8e, 0x29, 0x05, 0x7d, 0x11,
+	0xcd, 0x85, 0xa5, 0x29, 0x8f, 0xfa, 0xa6, 0xe7, 0x50, 0x49, 0x65, 0x24, 0x57, 0xa9, 0x55, 0x6a,
+	0x92, 0x56, 0xc3, 0xf9, 0xf2, 0x62, 0x0b, 0x79, 0x81, 0x40, 0x81, 0x3a, 0xe4, 0x79, 0x90, 0x6d,
+	0x41, 0x25, 0xf3, 0x20, 0x78, 0x7c, 0xa3, 0xc0, 0x6b, 0x5c, 0x8b, 0x6f, 0xec, 0x9f, 0xa0, 0xe4,
+	0xa5, 0x13, 0x74, 0x4f, 0xb7, 0x35, 0xa7, 0xaa, 0xa6, 0x9c, 0xde, 0xd7, 0xc4, 0x6f, 0xe5, 0x13,
+	0xb7, 0x52, 0x55, 0x44, 0x9f, 0xb8, 0x95, 0xe8, 0x1b, 0x47, 0x32, 0xb2, 0xf4, 0x26, 0x69, 0x7d,
+	0xc2, 0xd5, 0xb7, 0xfd, 0x27, 0x81, 0x1a, 0x8f, 0xe3, 0xf9, 0x46, 0xcc, 0x3e, 0xf0, 0x81, 0x98,
+	0xaf, 0xa0, 0x1c, 0x7f, 0x58, 0x88, 0x44, 0x21, 0xd7, 0x9d, 0xcf, 0xf7, 0xb4, 0x20, 0x0e, 0xcf,
+	0x22, 0xe8, 0x1b, 0xa8, 0xcd, 0xa6, 0xa9, 0x44, 0xb7, 0xa5, 0x37, 0x4b, 0x8f, 0x45, 0x6f, 0x83,
+	0xec, 0x11, 0x54, 0x7d, 0xf1, 0x01, 0xe9, 0xd0, 0x57, 0xa0, 0x27, 0x71, 0x3c, 0x57, 0x64, 0x1e,
+	0xe6, 0x6d, 0xd8, 0x72, 0x15, 0xf0, 0xa0, 0x88, 0x76, 0x4c, 0x91, 0x59, 0x26, 0x18, 0xbf, 0x0f,
+	0x04, 0x6f, 0xaa, 0x6a, 0xcf, 0x55, 0x7d, 0x05, 0xfa, 0x2a, 0x7d, 0xba, 0x09, 0x2a, 0xc0, 0xfe,
+	0x83, 0x40, 0x15, 0x73, 0x71, 0x6e, 0x47, 0x6b, 0xb2, 0x73, 0xf4, 0x8c, 0x46, 0x63, 0x27, 0xd0,
+	0x4b, 0x27, 0x19, 0x30, 0x3d, 0x87, 0xea, 0x28, 0x11, 0x91, 0x8c, 0x9f, 0x24, 0xb1, 0x89, 0xb1,
+	0xff, 0x25, 0x50, 0x66, 0x6b, 0xb1, 0x90, 0xb4, 0x05, 0xba, 0xbc, 0x5b, 0x0a, 0xc5, 0xa2, 0xe1,
+	0x7c, 0xb1, 0x93, 0xa5, 0xce, 0xc3, 0xbb, 0xa5, 0xe0, 0x2a, 0xe2, 0x7e, 0xd4, 0xfa, 0xb3, 0xa3,
+	0x3e, 0xba, 0x71, 0x4d, 0x28, 0xcd, 0xd3, 0x49, 0x4e, 0x79, 0x5f, 0x19, 0x1e, 0xd1, 0x6f, 0x00,
+	0x56, 0xdb, 0x47, 0x61, 0x95, 0x9f, 0x7a, 0x31, 0x3b, 0x81, 0xaf, 0xff, 0x21, 0x60, 0x6c, 0x05,
+	0xd0, 0x06, 0x00, 0xf3, 0xae, 0xc3, 0x5f, 0xd8, 0x3b, 0xe6, 0x87, 0xe6, 0x0b, 0xb4, 0xdf, 0x72,
+	0xd6, 0x09, 0x19, 0x1f, 0x0c, 0x3c, 0xb3, 0x82, 0x36, 0x67, 0x7e, 0xc7, 0xcb, 0xec, 0x2a, 0xfd,
+	0x14, 0xea, 0x5d, 0xd6, 0x67, 0x21, 0xcb, 0x1c, 0x35, 0xfa, 0x12, 0x8c, 0x3e, 0xeb, 0xbc, 0xcb,
+	0x4c, 0x03, 0x4d, 0xe6, 0x87, 0x8c, 0x2b, 0x13, 0x68, 0x1d, 0xaa, 0x1e, 0x0b, 0x82, 0x4e, 0x8f,
+	0x99, 0x65, 0x34, 0x38, 0xeb, 0x74, 0xbd, 0xa0, 0x67, 0x12, 0x04, 0xfe, 0x99, 0xbb, 0xa1, 0xeb,
+	0xf7, 0xd0, 0xd6, 0xd0, 0xce, 0x80, 0xd5, 0x79, 0x09, 0xed, 0x61, 0xc0, 0x78, 0x10, 0x76, 0xc2,
+	0x61, 0x60, 0xea, 0xaf, 0x7b, 0x00, 0xf7, 0x82, 0x90, 0x86, 0xa2, 0x9d, 0x1f, 0xbf, 0xa0, 0x00,
+	0x95, 0x81, 0xdf, 0x77, 0x7d, 0x66, 0x12, 0xc5, 0x71, 0xe0, 0x87, 0x5d, 0x37, 0x08, 0x87, 0xfc,
+	0x7b, 0x53, 0xc3, 0xc2, 0xfe, 0x20, 0xfc, 0x81, 0x71, 0x66, 0x96, 0x9c, 0xff, 0x09, 0xd4, 0xb1,
+	0xd7, 0xfd, 0x69, 0x2a, 0x83, 0x64, 0x4d, 0xbf, 0x83, 0x7a, 0x4f, 0xc8, 0x8d, 0x87, 0x16, 0x0d,
+	0xef, 0xac, 0x68, 0x4e, 0x6d, 0x42, 0x2f, 0x01, 0xde, 0xe2, 0xb5, 0x11, 0xea, 0x25, 0xd2, 0x9d,
+	0xa0, 0xfc, 0x75, 0x9e, 0x7d, 0xb6, 0xe3, 0xcb, 0xa9, 0x5f, 0x01, 0x74, 0xc5, 0x4c, 0xe4, 0x49,
+	0x45, 0xc8, 0x8f, 0x64, 0x71, 0x81, 0x7b, 0xe5, 0x94, 0x2c, 0xe7, 0x3f, 0x02, 0x55, 0xd5, 0xb5,
+	0x64, 0x4d, 0xaf, 0x94, 0x4e, 0xb4, 0x94, 0xce, 0xdd, 0x2b, 0xd5, 0x13, 0xf2, 0xac, 0x48, 0x77,
+	0x9b, 0x60, 0xdd, 0x4c, 0xa2, 0x5a, 0x03, 0x85, 0xcd, 0x29, 0x60, 0x7b, 0x09, 0x46, 0x3f, 0x9e,
+	0xb8, 0x8b, 0x93, 0x92, 0xae, 0x00, 0xae, 0x57, 0xe9, 0xfb, 0xdc, 0x3a, 0x32, 0xcb, 0xf9, 0x2b,
+	0xdf, 0x1b, 0x28, 0xf1, 0x6b, 0xa8, 0x76, 0xc6, 0xe3, 0x83, 0xa2, 0x9b, 0x2d, 0x56, 0x54, 0xd4,
+	0x81, 0xda, 0x8f, 0xd3, 0xd1, 0xcd, 0x49, 0x39, 0xa8, 0x4e, 0x44, 0xeb, 0xe2, 0x51, 0x3c, 0x92,
+	0xe4, 0xfc, 0x4d, 0x00, 0x3c, 0x91, 0xa6, 0xd1, 0x44, 0xe4, 0xd3, 0x08, 0xc4, 0x62, 0x9c, 0x7b,
+	0x1e, 0xdc, 0x9d, 0x7c, 0x0b, 0x16, 0xb7, 0xa8, 0xce, 0xc6, 0x53, 0x79, 0x62, 0xd6, 0xb7, 0xf0,
+	0x32, 0xbb, 0x71, 0xa7, 0xe5, 0x39, 0x2b, 0xa8, 0xab, 0x45, 0x81, 0x44, 0x45, 0x42, 0xdb, 0x60,
+	0xe0, 0x7c, 0xb2, 0xe5, 0x68, 0xee, 0xaf, 0xc3, 0x62, 0xba, 0xc6, 0xf5, 0x6a, 0x36, 0xcb, 0x32,
+	0x0a, 0x07, 0x7a, 0x00, 0xd3, 0x26, 0xbf, 0x55, 0xd4, 0xef, 0xc4, 0xe5, 0xc7, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0xc2, 0x61, 0x25, 0xf8, 0x6a, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -734,186 +664,14 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// ServerClient is the client API for Server service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ServerClient interface {
-	CreateUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*RegisterInfo, error)
-	LogInUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*RegisterInfo, error)
-	PullEvent(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (Server_PullEventClient, error)
-}
-
-type serverClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewServerClient(cc *grpc.ClientConn) ServerClient {
-	return &serverClient{cc}
-}
-
-func (c *serverClient) CreateUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*RegisterInfo, error) {
-	out := new(RegisterInfo)
-	err := c.cc.Invoke(ctx, "/transport.Server/CreateUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *serverClient) LogInUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*RegisterInfo, error) {
-	out := new(RegisterInfo)
-	err := c.cc.Invoke(ctx, "/transport.Server/LogInUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *serverClient) PullEvent(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (Server_PullEventClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Server_serviceDesc.Streams[0], "/transport.Server/PullEvent", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &serverPullEventClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Server_PullEventClient interface {
-	Recv() (*Event, error)
-	grpc.ClientStream
-}
-
-type serverPullEventClient struct {
-	grpc.ClientStream
-}
-
-func (x *serverPullEventClient) Recv() (*Event, error) {
-	m := new(Event)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// ServerServer is the server API for Server service.
-type ServerServer interface {
-	CreateUser(context.Context, *UserInfo) (*RegisterInfo, error)
-	LogInUser(context.Context, *UserInfo) (*RegisterInfo, error)
-	PullEvent(*UserInfo, Server_PullEventServer) error
-}
-
-// UnimplementedServerServer can be embedded to have forward compatible implementations.
-type UnimplementedServerServer struct {
-}
-
-func (*UnimplementedServerServer) CreateUser(ctx context.Context, req *UserInfo) (*RegisterInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
-}
-func (*UnimplementedServerServer) LogInUser(ctx context.Context, req *UserInfo) (*RegisterInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LogInUser not implemented")
-}
-func (*UnimplementedServerServer) PullEvent(req *UserInfo, srv Server_PullEventServer) error {
-	return status.Errorf(codes.Unimplemented, "method PullEvent not implemented")
-}
-
-func RegisterServerServer(s *grpc.Server, srv ServerServer) {
-	s.RegisterService(&_Server_serviceDesc, srv)
-}
-
-func _Server_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfo)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ServerServer).CreateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/transport.Server/CreateUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServerServer).CreateUser(ctx, req.(*UserInfo))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Server_LogInUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfo)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ServerServer).LogInUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/transport.Server/LogInUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServerServer).LogInUser(ctx, req.(*UserInfo))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Server_PullEvent_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(UserInfo)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(ServerServer).PullEvent(m, &serverPullEventServer{stream})
-}
-
-type Server_PullEventServer interface {
-	Send(*Event) error
-	grpc.ServerStream
-}
-
-type serverPullEventServer struct {
-	grpc.ServerStream
-}
-
-func (x *serverPullEventServer) Send(m *Event) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-var _Server_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "transport.Server",
-	HandlerType: (*ServerServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateUser",
-			Handler:    _Server_CreateUser_Handler,
-		},
-		{
-			MethodName: "LogInUser",
-			Handler:    _Server_LogInUser_Handler,
-		},
-	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "PullEvent",
-			Handler:       _Server_PullEvent_Handler,
-			ServerStreams: true,
-		},
-	},
-	Metadata: "transport/chat-srv.proto",
-}
-
 // RoomListSrvClient is the client API for RoomListSrv service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RoomListSrvClient interface {
-	GetRoomList(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*RoomList, error)
-	CreateRoom(ctx context.Context, in *NewRoom, opts ...grpc.CallOption) (*RoomList, error)
-	DeleteRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*RoomList, error)
-	RenameRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*RoomList, error)
+	GetRoomList(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (RoomListSrv_GetRoomListClient, error)
+	CreateRoom(ctx context.Context, in *NewRoom, opts ...grpc.CallOption) (*Status, error)
+	DeleteRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*Status, error)
+	RenameRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*Status, error)
 }
 
 type roomListSrvClient struct {
@@ -924,17 +682,40 @@ func NewRoomListSrvClient(cc *grpc.ClientConn) RoomListSrvClient {
 	return &roomListSrvClient{cc}
 }
 
-func (c *roomListSrvClient) GetRoomList(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*RoomList, error) {
-	out := new(RoomList)
-	err := c.cc.Invoke(ctx, "/transport.RoomListSrv/GetRoomList", in, out, opts...)
+func (c *roomListSrvClient) GetRoomList(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (RoomListSrv_GetRoomListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_RoomListSrv_serviceDesc.Streams[0], "/transport.RoomListSrv/GetRoomList", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &roomListSrvGetRoomListClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *roomListSrvClient) CreateRoom(ctx context.Context, in *NewRoom, opts ...grpc.CallOption) (*RoomList, error) {
-	out := new(RoomList)
+type RoomListSrv_GetRoomListClient interface {
+	Recv() (*RoomInfo, error)
+	grpc.ClientStream
+}
+
+type roomListSrvGetRoomListClient struct {
+	grpc.ClientStream
+}
+
+func (x *roomListSrvGetRoomListClient) Recv() (*RoomInfo, error) {
+	m := new(RoomInfo)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *roomListSrvClient) CreateRoom(ctx context.Context, in *NewRoom, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
 	err := c.cc.Invoke(ctx, "/transport.RoomListSrv/CreateRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -942,8 +723,8 @@ func (c *roomListSrvClient) CreateRoom(ctx context.Context, in *NewRoom, opts ..
 	return out, nil
 }
 
-func (c *roomListSrvClient) DeleteRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*RoomList, error) {
-	out := new(RoomList)
+func (c *roomListSrvClient) DeleteRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
 	err := c.cc.Invoke(ctx, "/transport.RoomListSrv/DeleteRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -951,8 +732,8 @@ func (c *roomListSrvClient) DeleteRoom(ctx context.Context, in *RoomInfo, opts .
 	return out, nil
 }
 
-func (c *roomListSrvClient) RenameRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*RoomList, error) {
-	out := new(RoomList)
+func (c *roomListSrvClient) RenameRoom(ctx context.Context, in *RoomInfo, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
 	err := c.cc.Invoke(ctx, "/transport.RoomListSrv/RenameRoom", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -962,26 +743,26 @@ func (c *roomListSrvClient) RenameRoom(ctx context.Context, in *RoomInfo, opts .
 
 // RoomListSrvServer is the server API for RoomListSrv service.
 type RoomListSrvServer interface {
-	GetRoomList(context.Context, *UserInfo) (*RoomList, error)
-	CreateRoom(context.Context, *NewRoom) (*RoomList, error)
-	DeleteRoom(context.Context, *RoomInfo) (*RoomList, error)
-	RenameRoom(context.Context, *RoomInfo) (*RoomList, error)
+	GetRoomList(*UserInfo, RoomListSrv_GetRoomListServer) error
+	CreateRoom(context.Context, *NewRoom) (*Status, error)
+	DeleteRoom(context.Context, *RoomInfo) (*Status, error)
+	RenameRoom(context.Context, *RoomInfo) (*Status, error)
 }
 
 // UnimplementedRoomListSrvServer can be embedded to have forward compatible implementations.
 type UnimplementedRoomListSrvServer struct {
 }
 
-func (*UnimplementedRoomListSrvServer) GetRoomList(ctx context.Context, req *UserInfo) (*RoomList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRoomList not implemented")
+func (*UnimplementedRoomListSrvServer) GetRoomList(req *UserInfo, srv RoomListSrv_GetRoomListServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetRoomList not implemented")
 }
-func (*UnimplementedRoomListSrvServer) CreateRoom(ctx context.Context, req *NewRoom) (*RoomList, error) {
+func (*UnimplementedRoomListSrvServer) CreateRoom(ctx context.Context, req *NewRoom) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRoom not implemented")
 }
-func (*UnimplementedRoomListSrvServer) DeleteRoom(ctx context.Context, req *RoomInfo) (*RoomList, error) {
+func (*UnimplementedRoomListSrvServer) DeleteRoom(ctx context.Context, req *RoomInfo) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRoom not implemented")
 }
-func (*UnimplementedRoomListSrvServer) RenameRoom(ctx context.Context, req *RoomInfo) (*RoomList, error) {
+func (*UnimplementedRoomListSrvServer) RenameRoom(ctx context.Context, req *RoomInfo) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenameRoom not implemented")
 }
 
@@ -989,22 +770,25 @@ func RegisterRoomListSrvServer(s *grpc.Server, srv RoomListSrvServer) {
 	s.RegisterService(&_RoomListSrv_serviceDesc, srv)
 }
 
-func _RoomListSrv_GetRoomList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfo)
-	if err := dec(in); err != nil {
-		return nil, err
+func _RoomListSrv_GetRoomList_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserInfo)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(RoomListSrvServer).GetRoomList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/transport.RoomListSrv/GetRoomList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoomListSrvServer).GetRoomList(ctx, req.(*UserInfo))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(RoomListSrvServer).GetRoomList(m, &roomListSrvGetRoomListServer{stream})
+}
+
+type RoomListSrv_GetRoomListServer interface {
+	Send(*RoomInfo) error
+	grpc.ServerStream
+}
+
+type roomListSrvGetRoomListServer struct {
+	grpc.ServerStream
+}
+
+func (x *roomListSrvGetRoomListServer) Send(m *RoomInfo) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _RoomListSrv_CreateRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1066,10 +850,6 @@ var _RoomListSrv_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*RoomListSrvServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetRoomList",
-			Handler:    _RoomListSrv_GetRoomList_Handler,
-		},
-		{
 			MethodName: "CreateRoom",
 			Handler:    _RoomListSrv_CreateRoom_Handler,
 		},
@@ -1082,7 +862,13 @@ var _RoomListSrv_serviceDesc = grpc.ServiceDesc{
 			Handler:    _RoomListSrv_RenameRoom_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetRoomList",
+			Handler:       _RoomListSrv_GetRoomList_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "transport/chat-srv.proto",
 }
 
@@ -1090,6 +876,9 @@ var _RoomListSrv_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type UserSrvClient interface {
+	GetUserList(ctx context.Context, in *Get, opts ...grpc.CallOption) (UserSrv_GetUserListClient, error)
+	CreateUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*Status, error)
+	LogInUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*Status, error)
 	PushStatus(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*Status, error)
 }
 
@@ -1099,6 +888,56 @@ type userSrvClient struct {
 
 func NewUserSrvClient(cc *grpc.ClientConn) UserSrvClient {
 	return &userSrvClient{cc}
+}
+
+func (c *userSrvClient) GetUserList(ctx context.Context, in *Get, opts ...grpc.CallOption) (UserSrv_GetUserListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_UserSrv_serviceDesc.Streams[0], "/transport.UserSrv/GetUserList", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &userSrvGetUserListClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type UserSrv_GetUserListClient interface {
+	Recv() (*UserInfo, error)
+	grpc.ClientStream
+}
+
+type userSrvGetUserListClient struct {
+	grpc.ClientStream
+}
+
+func (x *userSrvGetUserListClient) Recv() (*UserInfo, error) {
+	m := new(UserInfo)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *userSrvClient) CreateUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/transport.UserSrv/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userSrvClient) LogInUser(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/transport.UserSrv/LogInUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *userSrvClient) PushStatus(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (*Status, error) {
@@ -1112,6 +951,9 @@ func (c *userSrvClient) PushStatus(ctx context.Context, in *UserInfo, opts ...gr
 
 // UserSrvServer is the server API for UserSrv service.
 type UserSrvServer interface {
+	GetUserList(*Get, UserSrv_GetUserListServer) error
+	CreateUser(context.Context, *UserInfo) (*Status, error)
+	LogInUser(context.Context, *UserInfo) (*Status, error)
 	PushStatus(context.Context, *UserInfo) (*Status, error)
 }
 
@@ -1119,12 +961,78 @@ type UserSrvServer interface {
 type UnimplementedUserSrvServer struct {
 }
 
+func (*UnimplementedUserSrvServer) GetUserList(req *Get, srv UserSrv_GetUserListServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetUserList not implemented")
+}
+func (*UnimplementedUserSrvServer) CreateUser(ctx context.Context, req *UserInfo) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (*UnimplementedUserSrvServer) LogInUser(ctx context.Context, req *UserInfo) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogInUser not implemented")
+}
 func (*UnimplementedUserSrvServer) PushStatus(ctx context.Context, req *UserInfo) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushStatus not implemented")
 }
 
 func RegisterUserSrvServer(s *grpc.Server, srv UserSrvServer) {
 	s.RegisterService(&_UserSrv_serviceDesc, srv)
+}
+
+func _UserSrv_GetUserList_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Get)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(UserSrvServer).GetUserList(m, &userSrvGetUserListServer{stream})
+}
+
+type UserSrv_GetUserListServer interface {
+	Send(*UserInfo) error
+	grpc.ServerStream
+}
+
+type userSrvGetUserListServer struct {
+	grpc.ServerStream
+}
+
+func (x *userSrvGetUserListServer) Send(m *UserInfo) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _UserSrv_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserSrvServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transport.UserSrv/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserSrvServer).CreateUser(ctx, req.(*UserInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserSrv_LogInUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserSrvServer).LogInUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transport.UserSrv/LogInUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserSrvServer).LogInUser(ctx, req.(*UserInfo))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _UserSrv_PushStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1150,11 +1058,25 @@ var _UserSrv_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserSrvServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "CreateUser",
+			Handler:    _UserSrv_CreateUser_Handler,
+		},
+		{
+			MethodName: "LogInUser",
+			Handler:    _UserSrv_LogInUser_Handler,
+		},
+		{
 			MethodName: "PushStatus",
 			Handler:    _UserSrv_PushStatus_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetUserList",
+			Handler:       _UserSrv_GetUserList_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "transport/chat-srv.proto",
 }
 
@@ -1162,12 +1084,9 @@ var _UserSrv_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RoomSrvClient interface {
-	AddUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*RoomInfo, error)
-	KickUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*RoomInfo, error)
+	AddUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*Status, error)
+	KickUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*Status, error)
 	LeaveRoom(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*Status, error)
-	SendMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error)
-	EditMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error)
-	DeleteMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error)
 }
 
 type roomSrvClient struct {
@@ -1178,8 +1097,8 @@ func NewRoomSrvClient(cc *grpc.ClientConn) RoomSrvClient {
 	return &roomSrvClient{cc}
 }
 
-func (c *roomSrvClient) AddUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*RoomInfo, error) {
-	out := new(RoomInfo)
+func (c *roomSrvClient) AddUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
 	err := c.cc.Invoke(ctx, "/transport.RoomSrv/AddUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1187,8 +1106,8 @@ func (c *roomSrvClient) AddUser(ctx context.Context, in *RoomUser, opts ...grpc.
 	return out, nil
 }
 
-func (c *roomSrvClient) KickUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*RoomInfo, error) {
-	out := new(RoomInfo)
+func (c *roomSrvClient) KickUser(ctx context.Context, in *RoomUser, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
 	err := c.cc.Invoke(ctx, "/transport.RoomSrv/KickUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1205,64 +1124,25 @@ func (c *roomSrvClient) LeaveRoom(ctx context.Context, in *RoomUser, opts ...grp
 	return out, nil
 }
 
-func (c *roomSrvClient) SendMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/transport.RoomSrv/SendMessage", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *roomSrvClient) EditMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/transport.RoomSrv/EditMessage", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *roomSrvClient) DeleteMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/transport.RoomSrv/DeleteMessage", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // RoomSrvServer is the server API for RoomSrv service.
 type RoomSrvServer interface {
-	AddUser(context.Context, *RoomUser) (*RoomInfo, error)
-	KickUser(context.Context, *RoomUser) (*RoomInfo, error)
+	AddUser(context.Context, *RoomUser) (*Status, error)
+	KickUser(context.Context, *RoomUser) (*Status, error)
 	LeaveRoom(context.Context, *RoomUser) (*Status, error)
-	SendMessage(context.Context, *RoomMsg) (*Status, error)
-	EditMessage(context.Context, *RoomMsg) (*Status, error)
-	DeleteMessage(context.Context, *RoomMsg) (*Status, error)
 }
 
 // UnimplementedRoomSrvServer can be embedded to have forward compatible implementations.
 type UnimplementedRoomSrvServer struct {
 }
 
-func (*UnimplementedRoomSrvServer) AddUser(ctx context.Context, req *RoomUser) (*RoomInfo, error) {
+func (*UnimplementedRoomSrvServer) AddUser(ctx context.Context, req *RoomUser) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
 }
-func (*UnimplementedRoomSrvServer) KickUser(ctx context.Context, req *RoomUser) (*RoomInfo, error) {
+func (*UnimplementedRoomSrvServer) KickUser(ctx context.Context, req *RoomUser) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KickUser not implemented")
 }
 func (*UnimplementedRoomSrvServer) LeaveRoom(ctx context.Context, req *RoomUser) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LeaveRoom not implemented")
-}
-func (*UnimplementedRoomSrvServer) SendMessage(ctx context.Context, req *RoomMsg) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
-}
-func (*UnimplementedRoomSrvServer) EditMessage(ctx context.Context, req *RoomMsg) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditMessage not implemented")
-}
-func (*UnimplementedRoomSrvServer) DeleteMessage(ctx context.Context, req *RoomMsg) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteMessage not implemented")
 }
 
 func RegisterRoomSrvServer(s *grpc.Server, srv RoomSrvServer) {
@@ -1323,60 +1203,6 @@ func _RoomSrv_LeaveRoom_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoomSrv_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoomMsg)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RoomSrvServer).SendMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/transport.RoomSrv/SendMessage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoomSrvServer).SendMessage(ctx, req.(*RoomMsg))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RoomSrv_EditMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoomMsg)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RoomSrvServer).EditMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/transport.RoomSrv/EditMessage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoomSrvServer).EditMessage(ctx, req.(*RoomMsg))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RoomSrv_DeleteMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoomMsg)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RoomSrvServer).DeleteMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/transport.RoomSrv/DeleteMessage",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoomSrvServer).DeleteMessage(ctx, req.(*RoomMsg))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _RoomSrv_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "transport.RoomSrv",
 	HandlerType: (*RoomSrvServer)(nil),
@@ -1393,19 +1219,287 @@ var _RoomSrv_serviceDesc = grpc.ServiceDesc{
 			MethodName: "LeaveRoom",
 			Handler:    _RoomSrv_LeaveRoom_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "transport/chat-srv.proto",
+}
+
+// MessageSrvClient is the client API for MessageSrv service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type MessageSrvClient interface {
+	SendMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error)
+	EditMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error)
+	DeleteMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error)
+}
+
+type messageSrvClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewMessageSrvClient(cc *grpc.ClientConn) MessageSrvClient {
+	return &messageSrvClient{cc}
+}
+
+func (c *messageSrvClient) SendMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/transport.MessageSrv/SendMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSrvClient) EditMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/transport.MessageSrv/EditMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageSrvClient) DeleteMessage(ctx context.Context, in *RoomMsg, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/transport.MessageSrv/DeleteMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MessageSrvServer is the server API for MessageSrv service.
+type MessageSrvServer interface {
+	SendMessage(context.Context, *RoomMsg) (*Status, error)
+	EditMessage(context.Context, *RoomMsg) (*Status, error)
+	DeleteMessage(context.Context, *RoomMsg) (*Status, error)
+}
+
+// UnimplementedMessageSrvServer can be embedded to have forward compatible implementations.
+type UnimplementedMessageSrvServer struct {
+}
+
+func (*UnimplementedMessageSrvServer) SendMessage(ctx context.Context, req *RoomMsg) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+}
+func (*UnimplementedMessageSrvServer) EditMessage(ctx context.Context, req *RoomMsg) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditMessage not implemented")
+}
+func (*UnimplementedMessageSrvServer) DeleteMessage(ctx context.Context, req *RoomMsg) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMessage not implemented")
+}
+
+func RegisterMessageSrvServer(s *grpc.Server, srv MessageSrvServer) {
+	s.RegisterService(&_MessageSrv_serviceDesc, srv)
+}
+
+func _MessageSrv_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomMsg)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSrvServer).SendMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transport.MessageSrv/SendMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSrvServer).SendMessage(ctx, req.(*RoomMsg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSrv_EditMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomMsg)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSrvServer).EditMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transport.MessageSrv/EditMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSrvServer).EditMessage(ctx, req.(*RoomMsg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageSrv_DeleteMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomMsg)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageSrvServer).DeleteMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transport.MessageSrv/DeleteMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageSrvServer).DeleteMessage(ctx, req.(*RoomMsg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _MessageSrv_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "transport.MessageSrv",
+	HandlerType: (*MessageSrvServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SendMessage",
-			Handler:    _RoomSrv_SendMessage_Handler,
+			Handler:    _MessageSrv_SendMessage_Handler,
 		},
 		{
 			MethodName: "EditMessage",
-			Handler:    _RoomSrv_EditMessage_Handler,
+			Handler:    _MessageSrv_EditMessage_Handler,
 		},
 		{
 			MethodName: "DeleteMessage",
-			Handler:    _RoomSrv_DeleteMessage_Handler,
+			Handler:    _MessageSrv_DeleteMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
+	Metadata: "transport/chat-srv.proto",
+}
+
+// EventSenderClient is the client API for EventSender service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type EventSenderClient interface {
+	PushEvent(ctx context.Context, in *Event, opts ...grpc.CallOption) (*Status, error)
+	PullEvent(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (EventSender_PullEventClient, error)
+}
+
+type eventSenderClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewEventSenderClient(cc *grpc.ClientConn) EventSenderClient {
+	return &eventSenderClient{cc}
+}
+
+func (c *eventSenderClient) PushEvent(ctx context.Context, in *Event, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/transport.EventSender/PushEvent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventSenderClient) PullEvent(ctx context.Context, in *UserInfo, opts ...grpc.CallOption) (EventSender_PullEventClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_EventSender_serviceDesc.Streams[0], "/transport.EventSender/PullEvent", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &eventSenderPullEventClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type EventSender_PullEventClient interface {
+	Recv() (*Event, error)
+	grpc.ClientStream
+}
+
+type eventSenderPullEventClient struct {
+	grpc.ClientStream
+}
+
+func (x *eventSenderPullEventClient) Recv() (*Event, error) {
+	m := new(Event)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// EventSenderServer is the server API for EventSender service.
+type EventSenderServer interface {
+	PushEvent(context.Context, *Event) (*Status, error)
+	PullEvent(*UserInfo, EventSender_PullEventServer) error
+}
+
+// UnimplementedEventSenderServer can be embedded to have forward compatible implementations.
+type UnimplementedEventSenderServer struct {
+}
+
+func (*UnimplementedEventSenderServer) PushEvent(ctx context.Context, req *Event) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushEvent not implemented")
+}
+func (*UnimplementedEventSenderServer) PullEvent(req *UserInfo, srv EventSender_PullEventServer) error {
+	return status.Errorf(codes.Unimplemented, "method PullEvent not implemented")
+}
+
+func RegisterEventSenderServer(s *grpc.Server, srv EventSenderServer) {
+	s.RegisterService(&_EventSender_serviceDesc, srv)
+}
+
+func _EventSender_PushEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Event)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventSenderServer).PushEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transport.EventSender/PushEvent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventSenderServer).PushEvent(ctx, req.(*Event))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventSender_PullEvent_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserInfo)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(EventSenderServer).PullEvent(m, &eventSenderPullEventServer{stream})
+}
+
+type EventSender_PullEventServer interface {
+	Send(*Event) error
+	grpc.ServerStream
+}
+
+type eventSenderPullEventServer struct {
+	grpc.ServerStream
+}
+
+func (x *eventSenderPullEventServer) Send(m *Event) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+var _EventSender_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "transport.EventSender",
+	HandlerType: (*EventSenderServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PushEvent",
+			Handler:    _EventSender_PushEvent_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PullEvent",
+			Handler:       _EventSender_PullEvent_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "transport/chat-srv.proto",
 }
